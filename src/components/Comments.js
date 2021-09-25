@@ -20,7 +20,7 @@ const CommentContainer = styled.div`
   border-top: none;
 `;
 
-export default () => {
+export default ({ logged }) => {
   const [comments, setComments] = useState([]);
   const { postId } = useParams();
   useEffect(() => {
@@ -40,7 +40,7 @@ export default () => {
         <CommentForm setComments={setComments} />
       </GridWrapper>
       {comments.map((comment) => (
-        <CommentItem key={comment._id} comment={comment} />
+        <CommentItem logged={logged} key={comment._id} comment={comment} />
       ))}
     </CommentContainer>
   );

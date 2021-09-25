@@ -40,6 +40,7 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   input,
+  select,
   textarea,
   button {
     padding: 5px;

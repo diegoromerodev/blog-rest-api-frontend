@@ -37,21 +37,29 @@ export default ({ logged, setLogged }) => {
 
   return (
     <StyledNav>
-      <StyledABorder
-        target="_blank"
-        href="https://github.com/diegoromerodev/blog-rest-api-frontend"
-      >
-        Frontend
-      </StyledABorder>
+      {!logged ? (
+        <StyledABorder
+          target="_blank"
+          href="https://github.com/diegoromerodev/blog-rest-api-frontend"
+        >
+          Frontend
+        </StyledABorder>
+      ) : (
+        <StyledLinkBorder to="/login">Switch User</StyledLinkBorder>
+      )}
       <StyledLinkBorder to="/">
         <h2>Blog API</h2>
       </StyledLinkBorder>
-      <StyledABorder
-        target="_blank"
-        href="https://github.com/diegoromerodev/blog-rest-api-backend"
-      >
-        Backend
-      </StyledABorder>
+      {!logged ? (
+        <StyledABorder
+          target="_blank"
+          href="https://github.com/diegoromerodev/blog-rest-api-backend"
+        >
+          Backend
+        </StyledABorder>
+      ) : (
+        <StyledLinkBorder to="/create">Create Post</StyledLinkBorder>
+      )}
       <RoundButtonLink
         onClick={logged ? logOut : () => {}}
         to={!logged ? "/login" : "/"}

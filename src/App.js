@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import CreatePost from "./components/CreatePost";
 import Footer from "./components/Footer";
 import LoginPage from "./components/LoginPage";
 import MainNav from "./components/MainNav";
@@ -24,6 +25,9 @@ export default () => {
           </Route>
           <Route path="/login">
             <LoginPage logged={logged} setLogged={setLogged} />
+          </Route>
+          <Route path="/create">
+            <CreatePost />
           </Route>
         </Switch>
       </Container>

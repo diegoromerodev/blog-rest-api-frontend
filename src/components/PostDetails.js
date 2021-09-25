@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import styled from "styled-components";
 import Comments from "./Comments";
+import parse from "html-react-parser";
 
 const StyledArticle = styled.article`
   border: 1px solid #333;
@@ -33,19 +34,27 @@ const StyledArticle = styled.article`
   .content {
     margin-bottom: 2rem;
     padding: 0 5rem;
+    line-height: 2em;
+    a {
+      text-decoration: underline;
+    }
   }
 `;
 
-export default () => {
+export default ({ logged }) => {
   const { postId } = useParams();
   const [postData, setPostData] = useState([]);
+  const [html, setHtml] = useState("");
   useEffect(() => {
     fetch("http://localhost:3000/api/posts/" + postId)
       .then((res) => {
         if (res.status !== 200) return [];
         return res.json();
       })
-      .then(setPostData);
+      .then((data) => {
+        setPostData(data);
+        setHtml(data.text);
+      });
   }, []);
   return (
     <>
@@ -55,12 +64,10 @@ export default () => {
           {postData?.author?.full_name} / Created on {postData?.formatted_date}
         </h4>
         <img src={postData?.thumbnail} />
-        <div
-          className="content"
-          dangerouslySetInnerHTML={{ __html: postData?.text }}
-        ></div>
+        {/* THIS NEED TO DOUBLE PARSE IS CAUSED BY A TINYMCE OUTPUT BUG */}
+        <div className="content">{parse(parse(html).toString())}</div>
       </StyledArticle>
-      <Comments />
+      <Comments logged={logged} />
     </>
   );
 };
