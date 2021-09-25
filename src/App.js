@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import LoginPage from "./components/LoginPage";
 import MainNav from "./components/MainNav";
 import PostDetails from "./components/PostDetails";
+import PostEdit from "./components/PostEdit";
 import ShowcaseGrid from "./components/ShowcaseGrid";
 import { Container } from "./styles/accents";
 import GlobalStyles from "./styles/GlobalStyles";
@@ -18,7 +19,10 @@ export default () => {
       <Container>
         <Switch>
           <Route exact path="/">
-            <ShowcaseGrid />
+            <ShowcaseGrid logged={logged} />
+          </Route>
+          <Route path="/posts/:postId/edit">
+            <PostEdit logged={logged} />
           </Route>
           <Route path="/posts/:postId">
             <PostDetails logged={logged} />

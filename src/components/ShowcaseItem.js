@@ -57,12 +57,17 @@ const BigShowItem = styled(Link)`
   &:hover img {
     filter: saturate(1);
   }
+  &[data-private="false"] {
+    opacity: 0.5;
+  }
 `;
 
 export default ({ post, position, length }) => {
   const [numberOfComments, setNumberOfComments] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:3000/api/posts/" + post._id + "/comments/")
+    fetch(
+      "https://blogapidr.herokuapp.com/api/posts/" + post._id + "/comments/"
+    )
       .then((res) => {
         return res.json() || [];
       })
@@ -77,6 +82,7 @@ export default ({ post, position, length }) => {
           : ""
       }
       position={position}
+      data-private={post.readable.toString()}
     >
       <div className="img-container">
         <img src={post.thumbnail} alt={post.title + " thumbnail"} />

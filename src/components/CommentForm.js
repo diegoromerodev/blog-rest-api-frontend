@@ -14,7 +14,7 @@ export default ({ setComments }) => {
       text,
     });
 
-    const url = `http://localhost:3000/api/posts/${postId}/comments/`;
+    const url = `https://blogapidr.herokuapp.com/api/posts/${postId}/comments/`;
     fetch(url, {
       headers: {
         "Content-Type": "application/json",

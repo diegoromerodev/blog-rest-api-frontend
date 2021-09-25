@@ -24,7 +24,7 @@ export default ({ logged }) => {
   const [comments, setComments] = useState([]);
   const { postId } = useParams();
   useEffect(() => {
-    fetch("http://localhost:3000/api/posts/" + postId + "/comments/")
+    fetch("https://blogapidr.herokuapp.com/api/posts/" + postId + "/comments/")
       .then((res) => {
         if (res.status !== 200) return [];
         return res.json();

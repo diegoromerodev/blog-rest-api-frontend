@@ -1,38 +1,18 @@
 import React, { useState } from "react";
-import { useParams } from "react-router";
-import styled from "styled-components";
-import { StyledForm } from "../styles/accents";
-
-const CommentContainer = styled.div`
-  padding: 1em 5em;
-  &.commentItem:nth-child(2) {
-    border-top: 1px solid #333;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid #333;
-  }
-`;
-
-const EditForm = styled(StyledForm)`
-  border-top: 1px solid #333;
-  button,
-  input {
-    border: 1px solid #333;
-    border-left: none;
-  }
-  input:first-child {
-    border-left: 1px solid #333;
-  }
-`;
+import { useHistory, useParams } from "react-router";
+import { CommentContainer, EditForm } from "../styles/importantStyles";
 
 export default ({ comment, logged }) => {
   const [hide, setHide] = useState(false);
   const { postId } = useParams();
+  const history = useHistory();
   const handleDelete = (e) => {
     e.preventDefault();
     const url =
-      "http://localhost:3000/api/posts/" + postId + "/comments/" + comment._id;
+      "https://blogapidr.herokuapp.com/api/posts/" +
+      postId +
+      "/comments/" +
+      comment._id;
     fetch(url, {
       method: "delete",
       headers: new Headers({
@@ -49,10 +29,40 @@ export default ({ comment, logged }) => {
         setHide(true);
       });
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const body = JSON.stringify({
+      author: e.target[1].value,
+      text: e.target[2].value,
+    });
+    const url =
+      "https://blogapidr.herokuapp.com/api/posts/" +
+      postId +
+      "/comments/" +
+      e.target[0].value;
+    fetch(url, {
+      method: "put",
+      headers: new Headers({
+        Authorization: "Bearer " + localStorage.getItem("blogapidr"),
+        "Content-Type": "application/json; charset=UTF-8",
+      }),
+      body,
+    })
+      .then((res) => {
+        if (!res.ok) return [];
+        return res.json();
+      })
+      .then((data) => {
+        if (data.length < 1) return;
+        history.replace("/posts/" + postId);
+      });
+  };
+
   return (
     <>
       {hide || (
-        <EditForm>
+        <EditForm onSubmit={handleSubmit}>
           <CommentContainer className="commentItem">
             {logged && <input type="text" disabled value={comment._id} />}
             {!logged ? (

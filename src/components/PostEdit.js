@@ -1,11 +1,23 @@
-import React, { useRef, useState } from "react";
-import { useHistory } from "react-router";
+import React, { useEffect, useRef, useState } from "react";
+import { useHistory, useParams } from "react-router";
 import PostForm from "./PostForm";
 
 export default () => {
   const editorRef = useRef(null);
   const [errors, setErrors] = useState(false);
+  const [postData, setPostData] = useState(null);
   const history = useHistory();
+  const { postId } = useParams();
+  useEffect(() => {
+    fetch("https://blogapidr.herokuapp.com/api/posts/" + postId)
+      .then((res) => {
+        if (res.status !== 200) return [];
+        return res.json();
+      })
+      .then((data) => {
+        setPostData(data);
+      });
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     const body = JSON.stringify({
@@ -14,9 +26,9 @@ export default () => {
       text: e.target[2].value,
       readable: e.target[17].value,
     });
-    const url = "https://blogapidr.herokuapp.com/api/posts/";
+    const url = "https://blogapidr.herokuapp.com/api/posts/" + postId;
     fetch(url, {
-      method: "post",
+      method: "put",
       headers: new Headers({
         Authorization: "Bearer " + localStorage.getItem("blogapidr"),
         "Content-Type": "application/json; charset=UTF-8",
@@ -30,7 +42,7 @@ export default () => {
       })
       .then((data) => {
         if (data.length < 1) return;
-        history.replace("/posts/" + post._id);
+        history.replace("/posts/" + postId);
       });
   };
 
@@ -40,7 +52,8 @@ export default () => {
       editorRef={editorRef}
       handleSubmit={handleSubmit}
       errors={errors}
-      title="Create New Post"
+      title="Edit A Post"
+      post={postData}
     />
   );
 };

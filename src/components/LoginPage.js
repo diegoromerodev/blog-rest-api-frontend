@@ -38,7 +38,7 @@ export default ({ setLogged, logged }) => {
       password,
     });
 
-    const url = `http://localhost:3000/api/users/login/`;
+    const url = `https://blogapidr.herokuapp.com/api/users/login/`;
     fetch(url, {
       headers: {
         "Content-Type": "application/json",

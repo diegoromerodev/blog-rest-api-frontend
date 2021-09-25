@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyledForm } from "../styles/accents";
 import { Editor } from "@tinymce/tinymce-react";
 import styled from "styled-components";
@@ -26,15 +26,31 @@ const PostForm = styled(StyledForm)`
   }
 `;
 
-export default ({ method, handleSubmit, editorRef, title, errors }) => {
+export default ({ method, handleSubmit, editorRef, title, errors, post }) => {
+  const [readable, setReadable] = useState(false);
+  useEffect(() => {
+    if (post) {
+      setReadable(post.readable);
+    }
+  }, [post]);
   return (
     <PostForm method={method} onSubmit={handleSubmit}>
       <h3>{title}</h3>
-      <input type="text" name="thumbnail" placeholder="Post Thumnail URL" />
-      <input type="text" name="title" placeholder="Post Title" />
+      <input
+        type="text"
+        name="thumbnail"
+        placeholder="Post Thumnail URL"
+        defaultValue={post && post.thumbnail}
+      />
+      <input
+        type="text"
+        name="title"
+        placeholder="Post Title"
+        defaultValue={post && post.title}
+      />
       <Editor
         onInit={(evt, editor) => (editorRef.current = editor)}
-        initialValue="<p>Post Body</p>"
+        initialValue={post ? post.text : "<p>Post Body</p>"}
         init={{
           height: 500,
           menubar: false,
@@ -52,10 +68,18 @@ export default ({ method, handleSubmit, editorRef, title, errors }) => {
             "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
         }}
       />
-      <select name="readable">
+      <select
+        name="readable"
+        value={readable.toString()}
+        onChange={() => setReadable((prevState) => !prevState)}
+      >
         <option disabled>Post Privacy</option>
-        <option value="false">Private</option>
-        <option value="true">Public</option>
+        <option name="false" value="false">
+          Private
+        </option>
+        <option name="true" value="true">
+          Public
+        </option>
       </select>
       <button
         type="submit"

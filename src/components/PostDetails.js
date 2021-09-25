@@ -1,52 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import styled from "styled-components";
+import { useHistory, useParams } from "react-router";
 import Comments from "./Comments";
 import parse from "html-react-parser";
-
-const StyledArticle = styled.article`
-  border: 1px solid #333;
-  border-top: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  h1 {
-    font-family: "Noto Serif", serif;
-    font-size: 4em;
-    margin: 2rem;
-  }
-  h4 {
-    flex-grow: 0;
-    display: inline-block;
-    padding: 0.5em 1em;
-    background-color: #333;
-    color: #fafafa;
-    font-weight: lighter;
-    font-size: 0.9em;
-    margin-bottom: 2rem;
-  }
-  img {
-    max-height: 50vh;
-    filter: saturate(0);
-    box-shadow: 5px 5px 0 #333;
-    margin-bottom: 2rem;
-  }
-  .content {
-    margin-bottom: 2rem;
-    padding: 0 5rem;
-    line-height: 2em;
-    a {
-      text-decoration: underline;
-    }
-  }
-`;
+import { StyledLinkBorder } from "../styles/accents";
+import { StyledArticle } from "../styles/importantStyles";
 
 export default ({ logged }) => {
   const { postId } = useParams();
   const [postData, setPostData] = useState([]);
   const [html, setHtml] = useState("");
+  const [readable, setReadable] = useState(false);
+  const history = useHistory();
   useEffect(() => {
-    fetch("http://localhost:3000/api/posts/" + postId)
+    fetch("https://blogapidr.herokuapp.com/api/posts/" + postId)
       .then((res) => {
         if (res.status !== 200) return [];
         return res.json();
@@ -54,11 +20,78 @@ export default ({ logged }) => {
       .then((data) => {
         setPostData(data);
         setHtml(data.text);
+        setReadable(data.readable);
       });
   }, []);
+
+  const changeVisibility = () => {
+    const body = JSON.stringify({
+      thumbnail: postData.thumbnail,
+      title: postData.title,
+      text: postData.text,
+      readable: (!readable).toString(),
+    });
+    const url = "https://blogapidr.herokuapp.com/api/posts/" + postData._id;
+    fetch(url, {
+      method: "put",
+      headers: new Headers({
+        Authorization: "Bearer " + localStorage.getItem("blogapidr"),
+        "Content-Type": "application/json; charset=UTF-8",
+      }),
+      body,
+    })
+      .then((res) => {
+        if (!res.ok) return [];
+        return res.json();
+      })
+      .then((data) => {
+        if (data.length < 1) return;
+        setReadable(!readable);
+      });
+  };
+
+  const handleDelete = () => {
+    const url = "https://blogapidr.herokuapp.com/api/posts/" + postData._id;
+    fetch(url, {
+      method: "delete",
+      headers: new Headers({
+        Authorization: "Bearer " + localStorage.getItem("blogapidr"),
+        "Content-Type": "application/json; charset=UTF-8",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) return [];
+        return res.json();
+      })
+      .then((data) => {
+        if (data.length < 1) return;
+        history.replace("/");
+      });
+  };
+
   return (
     <>
       <StyledArticle>
+        {logged && (
+          <>
+            <StyledLinkBorder
+              style={{ marginTop: "2rem" }}
+              onClick={changeVisibility}
+            >
+              {readable ? "MAKE POST PRIVATE" : "MAKE POST PUBLIC"}
+            </StyledLinkBorder>
+            <StyledLinkBorder to={"/posts/" + postData._id + "/edit"}>
+              EDIT POST
+            </StyledLinkBorder>
+            <StyledLinkBorder
+              to="#"
+              onClick={handleDelete}
+              style={{ color: "red" }}
+            >
+              DELETE POST
+            </StyledLinkBorder>
+          </>
+        )}
         <h1>{postData?.title}</h1>
         <h4>
           {postData?.author?.full_name} / Created on {postData?.formatted_date}

@@ -24,7 +24,7 @@ const ShowcaseGrid = styled.section`
 export default () => {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:3000/api/posts/")
+    fetch("https://blogapidr.herokuapp.com/api/posts/")
       .then((res) => {
         if (res.status !== 200) return [];
         return res.json();
@@ -36,14 +36,18 @@ export default () => {
 
   return (
     <ShowcaseGrid posts={posts}>
-      {posts.map((post, index) => (
-        <ShowcaseItem
-          length={posts.length}
-          key={post._id}
-          position={index}
-          post={post}
-        />
-      ))}
+      {posts
+        .filter((post) => post.readable || !!localStorage.getItem("blogapidr"))
+        .map((post, index) => {
+          return (
+            <ShowcaseItem
+              length={posts.length}
+              key={post._id}
+              position={index}
+              post={post}
+            />
+          );
+        })}
     </ShowcaseGrid>
   );
 };
