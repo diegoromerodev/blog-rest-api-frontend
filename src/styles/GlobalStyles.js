@@ -5,6 +5,7 @@ export default createGlobalStyle`
         margin: 0;
         padding: 0;
         border: 0;
+        outline: none;
     }
 
     body {
@@ -16,4 +17,5 @@ export default createGlobalStyle`
         text-decoration: none;
         color: unset;
     }
+
 `;

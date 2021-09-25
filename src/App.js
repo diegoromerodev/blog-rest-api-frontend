@@ -1,13 +1,33 @@
-import React from "react";
-import { HashRouter as Router, Switch } from "react-router-dom";
+import React, { useState } from "react";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import Footer from "./components/Footer";
+import LoginPage from "./components/LoginPage";
 import MainNav from "./components/MainNav";
+import PostDetails from "./components/PostDetails";
+import ShowcaseGrid from "./components/ShowcaseGrid";
+import { Container } from "./styles/accents";
 import GlobalStyles from "./styles/GlobalStyles";
 
 export default () => {
+  const [logged, setLogged] = useState(false);
   return (
     <Router>
       <GlobalStyles />
-      <MainNav></MainNav>
+      <MainNav logged={logged} setLogged={setLogged}></MainNav>
+      <Container>
+        <Switch>
+          <Route exact path="/">
+            <ShowcaseGrid />
+          </Route>
+          <Route path="/posts/:postId">
+            <PostDetails logged={logged} />
+          </Route>
+          <Route path="/login">
+            <LoginPage logged={logged} setLogged={setLogged} />
+          </Route>
+        </Switch>
+      </Container>
+      <Footer></Footer>
     </Router>
   );
 };

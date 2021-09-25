@@ -1,6 +1,11 @@
 import styled from "styled-components";
-import React from "react";
-import { StyledABorder } from "../styles/accents";
+import React, { useEffect, useState } from "react";
+import {
+  RoundButtonLink,
+  StyledABorder,
+  StyledLinkBorder,
+} from "../styles/accents";
+import { useHistory } from "react-router";
 
 const StyledNav = styled.nav`
   display: flex;
@@ -15,7 +20,21 @@ const StyledNav = styled.nav`
   }
 `;
 
-export default () => {
+export default ({ logged, setLogged }) => {
+  const history = useHistory();
+  useEffect(() => {
+    const token = localStorage.getItem("blogapidr");
+    if (token) {
+      setLogged(true);
+    }
+  }, []);
+
+  const logOut = () => {
+    localStorage.setItem("blogapidr", "");
+    history.replace("/");
+    setLogged(false);
+  };
+
   return (
     <StyledNav>
       <StyledABorder
@@ -24,13 +43,22 @@ export default () => {
       >
         Frontend
       </StyledABorder>
-      <h2>Blog API</h2>
+      <StyledLinkBorder to="/">
+        <h2>Blog API</h2>
+      </StyledLinkBorder>
       <StyledABorder
         target="_blank"
         href="https://github.com/diegoromerodev/blog-rest-api-backend"
       >
         Backend
       </StyledABorder>
+      <RoundButtonLink
+        onClick={logged ? logOut : () => {}}
+        to={!logged ? "/login" : "/"}
+        style={{ position: "absolute", right: "15px" }}
+      >
+        {logged ? "Log Out" : "Log In"}
+      </RoundButtonLink>
     </StyledNav>
   );
 };
